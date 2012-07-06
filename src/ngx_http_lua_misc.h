@@ -6,7 +6,7 @@
 
 
 void ngx_http_lua_inject_misc_api(lua_State *L);
-
+int ngx_http_lua_ngx_set(lua_State *L);
 
 #endif /* NGX_HTTP_LUA_MISC_H */
 

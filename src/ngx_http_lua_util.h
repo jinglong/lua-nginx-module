@@ -122,6 +122,8 @@ void ngx_http_lua_create_new_global_table(lua_State *L, int narr, int nrec);
 
 int ngx_http_lua_traceback(lua_State *L);
 
+void ngx_http_lua_seal_table(lua_State *L, lua_CFunction get,
+    lua_CFunction set);
 
 #endif /* NGX_HTTP_LUA_UTIL_H */
 

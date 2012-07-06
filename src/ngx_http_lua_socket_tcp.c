@@ -135,6 +135,7 @@ ngx_http_lua_inject_socket_tcp_api(ngx_log_t *log, lua_State *L)
         lua_setfield(L, -2, "connect");
     }
 
+    ngx_http_lua_seal_table(L, NULL, NULL);
     lua_setfield(L, -2, "socket");
 
     /* {{{req socket object metatable */

@@ -692,3 +692,42 @@ hi
 --- response_headers
 Content-Type: application/json; charset=utf-8
 
+
+
+=== TEST 32: avoid unexpected changes of build-in tables
+--- http_config
+    lua_shared_dict dogs 1m;
+
+--- config
+    location /change {
+        content_by_lua '
+            local r, e = pcall(function() ngx.sleep = ngx.say end)
+            if r then ngx.say("changed") else ngx.say(e) end
+
+            local r, e = pcall(function() ngx.location.capture = ngx.say end)
+            if r then ngx.say("changed") else ngx.say(e) end
+
+            local r, e = pcall(function() ngx.re.match = ngx.say end)
+            if r then ngx.say("changed") else ngx.say(e) end
+
+            local r, e = pcall(function() ngx.shared.dogs = ngx.say end)
+            if r then ngx.say("changed") else ngx.say(e) end
+
+            local r, e = pcall(function() ngx.socket.tcp = ngx.say end)
+            if r then ngx.say("changed") else ngx.say(e) end
+
+            local r, e = pcall(function() ngx.req.socket = ngx.say end)
+            if r then ngx.say("changed") else ngx.say(e) end
+        ';
+    }
+    location /test {
+        content_by_lua '
+            local s = ngx.re.match("abcd", "ab");
+            if s[0] == "ab" then ngx.say("ok") end'; 
+    }
+--- pipelined_requests eval
+["GET /change", "GET /test"]
+--- response_body_like eval
+["attempt to write to ngx. with the key \"sleep\"\n.*Not allowed\n.*Not allowed\n.*Not allowed\n.*Not allowed\n.*Not allowed\n", "ok"]
+--- ONLY
+

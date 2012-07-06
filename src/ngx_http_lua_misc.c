@@ -9,7 +9,6 @@
 
 
 static int ngx_http_lua_ngx_get(lua_State *L);
-static int ngx_http_lua_ngx_set(lua_State *L);
 
 
 void
@@ -84,7 +83,7 @@ ngx_http_lua_ngx_get(lua_State *L)
 }
 
 
-static int
+int
 ngx_http_lua_ngx_set(lua_State *L)
 {
     ngx_http_request_t          *r;

@@ -326,6 +326,7 @@ ngx_http_lua_inject_shdict_api(ngx_http_lua_main_conf_t *lmcf, lua_State *L)
         lua_newtable(L);    /* ngx.shared */
     }
 
+    ngx_http_lua_seal_table(L, NULL, NULL);
     lua_setfield(L, -2, "shared");
 }
 

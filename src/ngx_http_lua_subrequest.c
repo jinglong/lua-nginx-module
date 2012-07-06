@@ -1233,6 +1233,7 @@ ngx_http_lua_inject_subrequest_api(lua_State *L)
     lua_pushcfunction(L, ngx_http_lua_ngx_location_capture_multi);
     lua_setfield(L, -2, "capture_multi");
 
+    ngx_http_lua_seal_table(L, NULL, NULL);
     lua_setfield(L, -2, "location");
 }
 

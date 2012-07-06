@@ -179,6 +179,7 @@ ngx_http_lua_inject_ndk_api(lua_State *L)
     lua_setfield(L, -2, "ndk"); /* ndk package loaded */
     lua_pop(L, 2);
 
+    ngx_http_lua_seal_table(L, NULL, NULL);
     lua_setglobal(L, "ndk");
 }
 

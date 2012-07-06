@@ -1631,6 +1631,7 @@ ngx_http_lua_inject_regex_api(lua_State *L)
     lua_pushcfunction(L, ngx_http_lua_ngx_re_gsub);
     lua_setfield(L, -2, "gsub");
 
+    ngx_http_lua_seal_table(L, NULL, NULL);
     lua_setfield(L, -2, "re");
 }
 

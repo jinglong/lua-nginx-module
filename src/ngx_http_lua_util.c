@@ -602,6 +602,7 @@ ngx_http_lua_inject_ngx_api(ngx_conf_t *cf, lua_State *L)
     lua_setfield(L, -2, "ngx"); /* ngx package loaded */
     lua_pop(L, 2);
 
+    ngx_http_lua_seal_table(L, NULL, ngx_http_lua_ngx_set);
     lua_setglobal(L, "ngx");
 }
 
@@ -1709,6 +1710,7 @@ ngx_http_lua_inject_req_api(ngx_log_t *log, lua_State *L)
 
     ngx_http_lua_inject_req_socket_api(L);
 
+    ngx_http_lua_seal_table(L, NULL, NULL);
     lua_setfield(L, -2, "req");
 }
 
@@ -2497,3 +2499,48 @@ ngx_http_lua_param_set(lua_State *L)
     return ngx_http_lua_body_filter_param_set(L, r, ctx);
 }
 
+
+static int
+ngx_http_lua_seal_table_set(lua_State *L)
+{
+    return luaL_error(L, "Not allowed");
+}
+
+
+void
+ngx_http_lua_seal_table(lua_State *L, lua_CFunction get, lua_CFunction set)
+{
+    /* proxy table(empty) */
+    lua_newtable(L);
+
+    /* metatable */
+    lua_createtable(L, 0, 2 /* nrec */);
+
+    /* set __index default to the real table */
+    if (get) {
+        lua_pushcfunction(L, get);
+
+    } else {
+        lua_pushvalue(L, -3);
+    }
+
+    lua_setfield(L, -2, "__index");
+
+    /* make the real table read only */
+    if (set) {
+        lua_pushcfunction(L, set);
+
+    } else {
+        lua_pushcfunction(L, ngx_http_lua_seal_table_set);
+    }
+
+    lua_setfield(L, -2, "__newindex");
+
+    /* seal metatable */
+    lua_pushstring(L, "Not allowed");
+    lua_setfield(L, -2, "__metatable");
+
+    lua_setmetatable(L, -2);
+
+    lua_remove(L, -2);
+}
