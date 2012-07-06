@@ -729,5 +729,4 @@ Content-Type: application/json; charset=utf-8
 ["GET /change", "GET /test"]
 --- response_body_like eval
 ["attempt to write to ngx. with the key \"sleep\"\n.*Not allowed\n.*Not allowed\n.*Not allowed\n.*Not allowed\n.*Not allowed\n", "ok"]
---- ONLY
 
